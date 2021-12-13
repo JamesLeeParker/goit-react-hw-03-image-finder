@@ -18,23 +18,28 @@ export default class App extends Component {
   };
 
   componentDidMount() {
-    this.getFetch();
+    this.getFetch().then((data) => {
+      if (this.state.perPage > 12) {
+        this.setState({ perPage: 12 });
+      }
+      this.setState({ images: data.hits });
+    });
   }
 
   componentDidUpdate() {
-    this.getFetch();
+    this.getFetch().then((data) => this.setState({ images: data.hits }));
   }
 
   clearState = () => {
     this.setState({ perPage: 12 });
   };
 
-  getFetch = () => {
-    fetch(
+  getFetch = async () => {
+    const apiImages = await fetch(
       `https://pixabay.com/api/?q=${this.state.query}&page=1&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${this.state.perPage}`
-    )
-      .then((res) => res.json())
-      .then((data) => this.setState({ images: data.hits }));
+    );
+    const imagesArr = apiImages.json();
+    return imagesArr;
   };
 
   getQuery = (value) => {
@@ -52,15 +57,6 @@ export default class App extends Component {
       <>
         <Searchbar getQuery={this.getQuery} />
         <ImageGallery images={this.state.images} />
-        {/* {this.state.images.length > 0 && (
-          <Loader
-            type="ThreeDots"
-            color="#00BFFF"
-            height={60}
-            width={60}
-            timeout={2000}
-          /> */}
-        {/* )} */}
         <Loader />
         <Button getLoadMore={this.getLoadMore} />
       </>
