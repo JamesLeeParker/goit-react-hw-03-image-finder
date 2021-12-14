@@ -13,7 +13,7 @@ export default class ImageGallery extends Component {
     window.addEventListener("keydown", this.closeModalByEscape);
   }
 
-  componentWillUpdate() {
+  componentWillUnmount() {
     window.removeEventListener("keydown", this.closeModalByEscape);
   }
 
